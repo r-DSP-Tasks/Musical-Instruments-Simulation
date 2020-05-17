@@ -141,7 +141,7 @@ if __name__ == '__main__':
     import sounddevice as sd
     from scipy.io import wavfile
     import time
-    
+
     fs = 44100
     f = 220.0
     d = 0.1
@@ -153,6 +153,11 @@ if __name__ == '__main__':
     # note = guitarNote(b, d, keyFreq(28))
     for i in range(28, 35):
         key = pianoNote(keyFreq(i))
+        sd.play(key, samplerate=fs)
+        time.sleep(1)
+
+    for i in range(28, 35):
+        key = guitarNote(b, d, keyFreq(i))
         sd.play(key, samplerate=fs)
         time.sleep(1)
 
