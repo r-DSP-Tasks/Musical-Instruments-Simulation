@@ -1,7 +1,9 @@
 import numpy as np
+import simpleaudio as sa
+import time
 
 
-def pianoNote(frequency):
+def piano_note(frequency):
     """
     Create A Piano Note Sound given a certain key.
 
@@ -12,7 +14,7 @@ def pianoNote(frequency):
 
     """
     pi = np.pi
-    time = np.linspace(0, 1, num= 44100)
+    time = np.linspace(0, 1, num=44100)
     Y = np.sin(2 * pi * frequency * time) * np.exp(-0.0004 * 2 * pi * frequency * time)
 
     # Adding overnotes
@@ -29,10 +31,13 @@ def pianoNote(frequency):
     # Saturating Sound Quatlity
     Y *= 1 + 16 * time * np.exp(-6 * time)
 
-    return np.array(Y)
+    # Making Sure the highest value is in 16 bit range
+    Y = Y * (2 ** 15 - 1) / np.max(np.abs(Y))
+
+    return np.array(Y, dtype=np.int16)
 
 
-def keyFreq(n):
+def key_freq(n):
     """
     Calculate frequency given key Number.
     
@@ -43,7 +48,7 @@ def keyFreq(n):
     return 440*((np.power(2, 1./12))**(n-49))
 
 
-def computeAnDn(fs, f, d, b):
+def compute_an_dn(fs, f, d, b):
     """
     Compute Vibration Spectrum of Strings.
     
@@ -69,7 +74,7 @@ def computeAnDn(fs, f, d, b):
     return np.array(An, dtype=np.float32), np.array(dn, dtype=np.float32)
 
 
-def guitarNote(b, d, f):
+def guitar_note(b, d, f):
     """
     Compute Guitar Amplitudes. 
     
@@ -85,17 +90,19 @@ def guitarNote(b, d, f):
 
     bpm = 80
     fs = 44100
-    An, dn = computeAnDn(fs, f, d, b)
+    An, dn = compute_an_dn(fs, f, d, b)
 
     Nt = int((fs*60)/bpm)
 
-    for i in range(Nt):
+    for i in range(fs):
         s = 0.0
         for x in range(len(An)):
             s += An[x] * np.cos(2.0 * np.pi * i * f * dn[x] * (x+1)/fs) * np.exp(-gama * (x+1) *i/fs)
         sj.append(round(s, 6))
 
-    return np.array(sj, dtype=np.float32)
+    # Mapping range to 16 bit
+    sj = sj * (2 ** 15 - 1) / np.max(np.abs(sj))
+    return np.array(sj, dtype=np.int16)
 
 
 def karplus_strong(wavetable, n_samples):
@@ -109,10 +116,15 @@ def karplus_strong(wavetable, n_samples):
         previous_value = samples[-1]
         current_sample += 1
         current_sample = current_sample % wavetable.size
-    return np.array(samples)
+
+    samples = np.array(samples)
+
+    # Mapping to 16bit range
+    samples = samples * (2 ** 15 - 1) / np.max(np.abs(samples))
+    return samples.astype(np.int16)
 
 
-def createWaveTable(fs, freq):
+def create_wave_table(fs, freq):
     """
     Creates a Wave table of a certain Frequency.
 
@@ -120,12 +132,12 @@ def createWaveTable(fs, freq):
     :param freq: A Given Frequency (HZ)
     :return: Wave TAble Array
     """
-    wavetable_size = fs // int(freq)
-    wavetable = (2 * np.random.randint(0, 2, wavetable_size) - 1).astype(np.float)
-    return wavetable
+    wave_table_size = fs // int(freq)
+    wave_table = (100 * np.random.randint(0, 10, wave_table_size) - 1).astype(np.float) / 10
+    return wave_table
 
 
-def playSound(data, fs):
+def play_sound(data, fs):
     """
     Uses Sounddevice to produce sound.
 
@@ -133,40 +145,27 @@ def playSound(data, fs):
     :param data: numpy array
     :param fs: Sample Rate
     """
-    sd.play(data, fs)
+    sa.play_buffer(data, len(data.shape), 2, fs)
     time.sleep(1)
 
 
 if __name__ == '__main__':
-    import sounddevice as sd
-    from scipy.io import wavfile
-    import time
-
     fs = 44100
     f = 220.0
     d = 0.1
-    b = 0.0    
-    # wavfile.write("Test.wav", int(fs), note)
-
+    b = 0.0
     # a, n = computeAnDn(fs, f, d, b)
 
-    # note = guitarNote(b, d, keyFreq(28))
-    for i in range(28, 35):
-        key = pianoNote(keyFreq(i))
-        sd.play(key, samplerate=fs)
-        time.sleep(1)
+    for i in range(28, 45):
+        key = piano_note(key_freq(i))
+        play_sound(key, fs)
 
-    for i in range(28, 35):
-        key = guitarNote(b, d, keyFreq(i))
-        sd.play(key, samplerate=fs)
-        time.sleep(1)
+    # guitar sounds are ranged from 82 HZ to 320 Hz
+    for i in range(20, 45, 4):
+        print(key_freq(i))
+        play_sound(karplus_strong(create_wave_table(fs, key_freq(i)), fs), fs)
 
-    for i in range(30):
-        playSound(karplus_strong(createWaveTable(fs, keyFreq(i)), 2*fs), fs)
-
-    # from oct2py import Oct2Py
     #
-    # with Oct2Py() as oc:
-    #     a = oc.audioplayer(key, fs)
-    #     oc.play(a)
-
+    # for i in range(28, 35):
+    #     key = guitar_note(b, d, key_freq(i))
+    #     play_sound(key, fs)
