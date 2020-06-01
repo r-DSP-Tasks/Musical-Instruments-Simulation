@@ -70,19 +70,19 @@
   }
 
 QWidget#tab{
-background-image: url(/home/ahmad/PycharmProjects/Musical-Instruments-Simulation/icons/guitar.jpg); 
+background-image: url(:/icons/guitar.jpg/icons/guitar.jpg); 
 background-position: center;
 background-size : auto;
  }
 QWidget#tab_2{
-background-image: url(/home/ahmad/PycharmProjects/Musical-Instruments-Simulation/icons/piano.jpg); 
+background-image: url(:/icons/piano.jpg/icons/piano.jpg); 
 background-position: center ;
 background-repeat: no-repeat;
 background-size : cover;
  }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="icon">
@@ -690,6 +690,8 @@ background-size : cover;
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="srcs.qrc"/>
+ </resources>
  <connections/>
 </ui>

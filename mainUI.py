@@ -58,12 +58,12 @@ class Ui_MainWindow(object):
 "  }\n"
 "\n"
 "QWidget#tab{\n"
-"background-image: url(/home/ahmad/PycharmProjects/Musical-Instruments-Simulation/icons/guitar.jpg); \n"
+"background-image: url(:/icons/guitar.jpg/icons/guitar.jpg); \n"
 "background-position: center;\n"
 "background-size : auto;\n"
 " }\n"
 "QWidget#tab_2{\n"
-"background-image: url(/home/ahmad/PycharmProjects/Musical-Instruments-Simulation/icons/piano.jpg); \n"
+"background-image: url(:/icons/piano.jpg/icons/piano.jpg); \n"
 "background-position: center ;\n"
 "background-repeat: no-repeat;\n"
 "background-size : cover;\n"
@@ -274,7 +274,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Guitar"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Piano"))
 
-
+import srcs
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

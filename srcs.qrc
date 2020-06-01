@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/icons/guitar.jpg">
+    <file>icons/guitar.jpg</file>
+  </qresource>
+  <qresource prefix="/icons/piano.jpg">
+    <file>icons/piano.jpg</file>
+  </qresource>
+</RCC>
