@@ -145,6 +145,7 @@ def play_sound(data, fs):
     :param data: numpy array
     :param fs: Sample Rate
     """
+    sa.stop_all()
     sa.play_buffer(data, len(data.shape), 2, fs)
     time.sleep(1)
 
