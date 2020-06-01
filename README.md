@@ -11,7 +11,7 @@ Instruments included :
 
 ## <u>Basic Usage</u>
 
-The application`s main screen consists of two tabs for each instrument, simply switch to desired device and click on strings 
+The application`s main screen consists of two tabs for each instrument, simply switch to desired device and click on strings/keys.
 
 ![](images/1.png)
 
